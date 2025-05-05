@@ -16,6 +16,10 @@ enemy = Actor('enemy')
 enemy.x = WIDTH + 100
 enemy.y = 450
 
+start_button = Actor('start_game', center=(WIDTH // 2, HEIGHT // 2 - 70))
+sound = Actor('sound', center=(WIDTH // 2, HEIGHT // 2))
+exit = Actor('exit', center=(WIDTH // 2, HEIGHT // 2 + 70))
+
 scenario = Actor('scenario', (WIDTH // 2, HEIGHT // 2))
 scenario2 = Actor('scenario', (WIDTH + WIDTH // 2, HEIGHT // 2))
 
@@ -35,6 +39,8 @@ def draw():
     player.draw()
     enemy.draw()
 
+    sounds.music.play()
+
     if game_state == 'start':
         draw_start_screen()
     elif game_state == 'playing':
@@ -45,12 +51,9 @@ def draw():
         screen.draw.text("Pressione ESPAÇO para jogar novamente", center=(WIDTH // 2, HEIGHT // 2 + 50), fontsize=40, color="white")
 
 def draw_start_screen():
-    screen.draw.text("🚀 Bem-vindo ao Desvia Inimigos!", center=(WIDTH // 2, HEIGHT // 2 - 100), fontsize=50, color="cyan")
-    screen.draw.text("Instruções:", center=(WIDTH // 2, HEIGHT // 2 - 30), fontsize=40, color="white")
-    screen.draw.text("Use as setas ESQUERDA/DIREITA para mover", center=(WIDTH // 2, HEIGHT // 2 + 20), fontsize=30, color="white")
-    screen.draw.text("Pressione SETA PARA CIMA para pular", center=(WIDTH // 2, HEIGHT // 2 + 60), fontsize=30, color="white")
-    screen.draw.text("Desvie de 20 inimigos para vencer!", center=(WIDTH // 2, HEIGHT // 2 + 100), fontsize=30, color="yellow")
-    screen.draw.text("Pressione ENTER para começar", center=(WIDTH // 2, HEIGHT // 2 + 160), fontsize=40, color="lime")
+    start_button.draw()
+    sound.draw()
+    exit.draw()
 
 def update():
     if game_state == 'playing':
@@ -122,16 +125,22 @@ def reset_enemy():
 def on_key_down(key):
     global is_jumping, jump_speed, game_state, score
 
-    if game_state == 'start':
-        if key == keys.RETURN:
-            start_game()
-    elif game_state == 'playing':
+    if game_state == 'playing':
         if key == keys.UP and not is_jumping:
             is_jumping = True
             jump_speed = -10
-    elif game_state == 'victory':
-        if key == keys.SPACE:
-            start_game()
+
+def on_mouse_down(pos):
+    global game_state
+
+    if start_button.collidepoint(pos):
+        start_game()
+
+    if sound.collidepoint(pos):
+        print()
+
+    if exit.collidpoint(pos):
+        print()
 
 def start_game():
     global game_state, score, player, enemy
