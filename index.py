@@ -32,7 +32,11 @@ game_won = False
 
 game_state = 'start'
 
+music_playing = False
+
 def draw():
+    global music_playing
+
     screen.clear()
     scenario.draw()
     scenario2.draw()
@@ -40,6 +44,7 @@ def draw():
     enemy.draw()
 
     sounds.music.play()
+    music_playing = True
 
     if game_state == 'start':
         draw_start_screen()
@@ -131,16 +136,21 @@ def on_key_down(key):
             jump_speed = -10
 
 def on_mouse_down(pos):
-    global game_state
+    global game_state, music_playing
 
     if start_button.collidepoint(pos):
         start_game()
 
     if sound.collidepoint(pos):
-        print()
+        if music_playing == True:
+            sounds.music.stop()
+            music_playing == False
+        elif music_playing == False:
+            sounds.music.play()
+            music_playing == True
 
-    if exit.collidpoint(pos):
-        print()
+    if exit.collidepoint(pos):
+        sys.exit()
 
 def start_game():
     global game_state, score, player, enemy
